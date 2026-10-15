@@ -13,6 +13,7 @@ echo "🎬 CineSphere Deploy Starting..."
 
 # ── 1. Pull latest code from GitHub ─────────────────────────
 cd "$SITE_DIR"
+git config --global --add safe.directory "$SITE_DIR" 2>/dev/null || true
 git pull origin main
 echo "✅ Code pulled from GitHub"
 
