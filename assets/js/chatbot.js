@@ -1,5 +1,5 @@
-/* CineMatch AI AI - Smart Conversational Movie Assistant */
-const CineMatch AI = {
+/* CineSphere AI - Smart Conversational Movie Assistant */
+const CineBot = {
     isOpen: false,
 
     init() {
@@ -15,7 +15,7 @@ const CineMatch AI = {
         const trigger = document.createElement('div');
         trigger.id = 'cinebotTrigger';
         trigger.className = 'cinebot-trigger';
-        trigger.title = 'Ask CineMatch AI AI Assistant';
+        trigger.title = 'Ask CineSphere AI Assistant';
         trigger.innerHTML = `
             <div class="cinebot-pulse"></div>
             <i class="fas fa-robot cinebot-icon"></i>
@@ -32,13 +32,13 @@ const CineMatch AI = {
                 <div class="cinebot-header-info">
                     <div class="cinebot-avatar"><i class="fas fa-robot"></i></div>
                     <div>
-                        <h4 class="cinebot-title">CineMatch AI AI</h4>
+                        <h4 class="cinebot-title">CineSphere AI</h4>
                         <span class="cinebot-status"><span class="cinebot-status-dot"></span> Active &bull; TMDB</span>
                     </div>
                 </div>
                 <div class="cinebot-header-actions">
-                    <button class="cinebot-action-btn" title="Clear Chat" onclick="CineMatch AI.clearChat()"><i class="fas fa-trash-alt"></i></button>
-                    <button class="cinebot-action-btn" title="Close" onclick="CineMatch AI.toggle()">&times;</button>
+                    <button class="cinebot-action-btn" title="Clear Chat" onclick="CineBot.clearChat()"><i class="fas fa-trash-alt"></i></button>
+                    <button class="cinebot-action-btn" title="Close" onclick="CineBot.toggle()">&times;</button>
                 </div>
             </div>
 
@@ -47,14 +47,14 @@ const CineMatch AI = {
             </div>
 
             <div class="cinebot-pills-bar" id="cinebotPills">
-                <button class="cinebot-pill" onclick="CineMatch AI.handlePillClick('🍿 Trending Movies')">🍿 Trending</button>
-                <button class="cinebot-pill" onclick="CineMatch AI.handlePillClick('🤖 Best Sci-Fi Movies')">🤖 Sci-Fi</button>
-                <button class="cinebot-pill" onclick="CineMatch AI.handlePillClick('🌐 Japanese & Asian Cinema')">🌐 Languages</button>
-
+                <button class="cinebot-pill" onclick="CineBot.handlePillClick('🍿 Trending Movies')">🍿 Trending</button>
+                <button class="cinebot-pill" onclick="CineBot.handlePillClick('🤖 Best Sci-Fi Movies')">🤖 Sci-Fi</button>
+                <button class="cinebot-pill" onclick="CineBot.handlePillClick('🌐 Japanese & Asian Cinema')">🌐 Languages</button>
+                <button class="cinebot-pill" onclick="CineBot.handlePillClick('🔥 Top Action Movies')">🔥 Action</button>
             </div>
 
-            <form class="cinebot-footer" id="cinebotForm" onsubmit="CineMatch AI.handleSubmit(event)">
-                <input type="text" id="cinebotInput" placeholder="Ask CineMatch AI for movie recommendations, languages, or downloads..." autocomplete="off">
+            <form class="cinebot-footer" id="cinebotForm" onsubmit="CineBot.handleSubmit(event)">
+                <input type="text" id="cinebotInput" placeholder="Ask CineSphere AI for movie recommendations, languages, or downloads..." autocomplete="off">
                 <button type="submit" class="cinebot-send-btn" id="cinebotSendBtn"><i class="fas fa-paper-plane"></i></button>
             </form>
         `;
@@ -72,6 +72,12 @@ const CineMatch AI = {
         const trigger = document.getElementById('cinebotTrigger');
         if (drawer) drawer.classList.toggle('active', this.isOpen);
         if (trigger) trigger.classList.toggle('active', this.isOpen);
+        if (this.isOpen) {
+            setTimeout(() => {
+                const input = document.getElementById('cinebotInput');
+                if (input) input.focus();
+            }, 300);
+        }
     },
 
     sendWelcomeMessage() {
@@ -79,8 +85,8 @@ const CineMatch AI = {
         if (!messages || messages.children.length > 0) return;
 
         this.appendBotMessage(`
-            Hello! 👋 I'm **CineMatch AI**, an AI like GPT and Gemini.
-            \nI can answer general questions or help you find movies and trailers. 
+            Hello! 👋 I'm **CineSphere AI**, your intelligent movie assistant.
+            \nI can recommend trending movies, find trailers, filter by language or genre, and answer cinema questions.
             \nHow can I help you today?
         `);
     },
@@ -155,15 +161,15 @@ const CineMatch AI = {
             setTimeout(() => {
                 this.hideTyping();
                 this.appendBotMessage(`
-                    Hello! 👋 I'm **CineMatch AI**, an AI like GPT and Gemini.
-                    \nI can answer general questions or help you find movies and trailers. 
-                    \nHow can I help you today?
+                    Hello! 👋 I'm **CineSphere AI**, your intelligent cinema assistant.
+                    \nI can answer questions or help you find great movies and trailers.
+                    \nWhat kind of movies do you feel like watching today?
                 `);
             }, 400);
             return;
         }
 
-        // 2. ChatGPT General Knowledge Q&A Engine (Science, Math, History, Tech, Jokes, Definitions)
+        // 2. General Knowledge Q&A Engine
         const generalAnswers = {
             'ai': '🤖 **Artificial Intelligence (AI)** refers to computer systems engineered to perform tasks that typically require human intelligence, such as visual perception, natural language processing, decision-making, and machine learning.',
             'chatgpt': '💡 **ChatGPT** is an AI language model developed by OpenAI that processes and generates human-like text based on natural language prompts.',
@@ -176,7 +182,7 @@ const CineMatch AI = {
             'capital of france': '🇫🇷 The capital of France is **Paris**, known globally for its art, fashion, gastronomy, and the Eiffel Tower.',
             'capital of india': '🇮🇳 The capital of India is **New Delhi**, the political seat of the world\'s largest democracy.',
             'capital of usa': '🇺🇸 The capital of the United States is **Washington, D.C.**',
-            'nolan': '🎬 **Christopher Nolan** is a acclaimed British-American film director known for mind-bending films like *Inception*, *Interstellar*, *The Dark Knight*, and *Oppenheimer*.',
+            'nolan': '🎬 **Christopher Nolan** is an acclaimed director known for mind-bending films like *Inception*, *Interstellar*, *The Dark Knight*, and *Oppenheimer*.',
             'marvel': '🦸 **Marvel Studios** is famous for the Marvel Cinematic Universe (MCU), bringing iconic superheroes like Iron Man, Captain America, Thor, and Spider-Man to cinema screens worldwide.'
         };
 
@@ -195,7 +201,7 @@ const CineMatch AI = {
         if (mathMatch) {
             try {
                 const expr = mathMatch[1];
-                const res = eval(expr);
+                const res = Function('"use strict";return (' + expr + ')')();
                 setTimeout(() => {
                     this.hideTyping();
                     this.appendBotMessage(`🧮 **Calculation Result:**\n\`${expr}\` = **${res}**`);
@@ -209,10 +215,11 @@ const CineMatch AI = {
             setTimeout(() => {
                 this.hideTyping();
                 this.appendBotMessage(`
-                    🎬 **Welcome to CineMatch AI**!
-                    \nI operate like an AI bot such as **GPT and Gemini**:
-                    \n1. **General Assistance**: Ask general knowledge, coding, or math questions.
-                    \n2. **Live Cinema Discovery**: Search movies, genres, languages, and instant 1080p trailers!
+                    🎬 **Welcome to CineSphere**!
+                    \nI am your **AI Cinema Assistant**:
+                    \n1. **Movie Recommendations**: Ask for any genre, actor, or mood (e.g., *"Best Sci-Fi Movies"* or *"Action movies"*).
+                    \n2. **Language Discovery**: Search for movies in Hindi, Tamil, Telugu, Japanese anime, Korean, and English.
+                    \n3. **Trailers & Info**: View movie details, ratings, and instant HD trailers!
                 `);
             }, 400);
             return;
@@ -243,7 +250,7 @@ const CineMatch AI = {
         }
 
         if (foundLang) {
-            const movies = await apiDiscoverMovies('', foundLang.code, 'popularity.desc');
+            const movies = typeof apiDiscoverMovies === 'function' ? await apiDiscoverMovies('', foundLang.code, 'popularity.desc') : [];
             this.hideTyping();
             if (movies && movies.length > 0) {
                 this.renderMovieRecommendationList(`🌐 Top **${foundLang.name}** Movies:`, movies.slice(0, 4));
@@ -271,7 +278,7 @@ const CineMatch AI = {
         }
 
         if (foundGenreId) {
-            const movies = await apiDiscoverMovies(foundGenreId, '', 'popularity.desc');
+            const movies = typeof apiDiscoverMovies === 'function' ? await apiDiscoverMovies(foundGenreId, '', 'popularity.desc') : [];
             this.hideTyping();
             if (movies && movies.length > 0) {
                 this.renderMovieRecommendationList(`🎬 Top **${foundGenreName}** Movies:`, movies.slice(0, 4));
@@ -282,16 +289,16 @@ const CineMatch AI = {
         }
 
         // 6. Default Live Movie & Knowledge Search Fallback
-        const searchResults = await apiSearchMovies(text);
+        const searchResults = typeof apiSearchMovies === 'function' ? await apiSearchMovies(text) : [];
         this.hideTyping();
 
         if (searchResults && searchResults.length > 0) {
-            this.renderMovieRecommendationList(`🔍 Google/TMDB Live Results for "${this.escapeHTML(text)}":`, searchResults.slice(0, 4));
+            this.renderMovieRecommendationList(`🔍 Results for "${this.escapeHTML(text)}":`, searchResults.slice(0, 4));
         } else {
             this.appendBotMessage(`
-                🤖 **CineMatch AI Response:**
-                \nI searched for **"${this.escapeHTML(text)}"**. While I couldn't find an exact movie match in the TMDB catalog, I am here to help!
-                \nAs an AI bot like GPT and Gemini, I can answer general knowledge questions, solve math problems, or search for movies like *"Avatar"*, *"Inception"*, or *"Top Sci-Fi"*!
+                🤖 **CineSphere AI Response:**
+                \nI searched for **"${this.escapeHTML(text)}"**. While I couldn't find an exact movie match in the catalog, I can help you discover movies by genre or language!
+                \nTry asking for *"Trending movies"*, *"Best Sci-Fi"*, or *"Anime movies"*!
             `);
         }
     },
@@ -307,8 +314,7 @@ const CineMatch AI = {
                         <span>⭐ ${m.rating}/10 &bull; ${m.original_language || 'EN'} &bull; ${m.release_date ? m.release_date.split('-')[0] : 'N/A'}</span>
                         <div class="cinebot-card-actions">
                             <a href="movie-details.html?id=${m.id}" class="btn btn-primary btn-xs"><i class="fas fa-info-circle"></i> Details</a>
-                            <button class="btn btn-outline btn-xs" onclick="CineMatch AI.previewTrailer('${m.id}', '${this.escapeHTML(m.title.replace(/'/g, "\\'"))}')"><i class="fas fa-video"></i> Trailer</button>
-                            <a href="${BASE_URL}/movies.php?action=download&url=${encodeURIComponent(m.image_url)}&title=${encodeURIComponent(m.title)}_Poster" class="btn btn-outline btn-xs"><i class="fas fa-download"></i> Poster</a>
+                            <button class="btn btn-outline btn-xs" onclick="CineBot.previewTrailer('${m.id}', '${this.escapeHTML(m.title.replace(/'/g, "\\'"))}')"><i class="fas fa-video"></i> Trailer</button>
                         </div>
                     </div>
                 </div>
@@ -325,11 +331,15 @@ const CineMatch AI = {
             return;
         }
 
-        const trailers = await apiGetMovieTrailers(movieId);
+        const trailers = typeof apiGetMovieTrailers === 'function' ? await apiGetMovieTrailers(movieId) : [];
         if (trailers && trailers.length > 0) {
-            UI.openTrailerModal(trailers[0].key, title);
+            if (typeof UI !== 'undefined' && UI.openTrailerModal) {
+                UI.openTrailerModal(trailers[0].key, title);
+            }
         } else {
-            UI.showToast('No HD trailer available for this movie.', 'info');
+            if (typeof UI !== 'undefined' && UI.showToast) {
+                UI.showToast('No HD trailer available for this movie.', 'info');
+            }
         }
     },
 
@@ -361,4 +371,10 @@ const CineMatch AI = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => CineMatch AI.init());
+window.CineBot = CineBot;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => CineBot.init());
+} else {
+    CineBot.init();
+}
