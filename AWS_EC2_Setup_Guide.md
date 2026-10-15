@@ -75,11 +75,7 @@ sudo apt install -y apache2 mysql-server php libapache2-mod-php php-mysql php-cu
 ### Step 2: Configure MySQL Database for CineSphere
 Your project connects via `backend/db.php` (`host: localhost`, `db_name: cinesphere_db`, `user: root`, blank password). 
 
-Run this single command to create the database and configure MySQL permissions:
-```bash
-sudo mysql -e "CREATE DATABASE IF NOT EXISTS cinesphere_db; ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY ''; FLUSH PRIVILEGES;"
-```
-*(If you are on Ubuntu 24.04 with MySQL 8.4+, run this alternative if needed)*:
+Run this command to create the database and configure MySQL permissions:
 ```bash
 sudo mysql -e "CREATE DATABASE IF NOT EXISTS cinesphere_db; ALTER USER 'root'@'localhost' IDENTIFIED BY ''; FLUSH PRIVILEGES;"
 ```
