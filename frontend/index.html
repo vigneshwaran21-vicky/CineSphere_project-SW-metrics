@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMatch | Modern Movie Info</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar glass-card">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <span class="logo-accent">Cine</span>Sphere
+            </a>
+            <div class="search-bar" style="display: flex; gap: 10px; align-items: center;">
+                <div class="search-input-wrapper" style="flex:1;">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="movieSearch" placeholder="Search Movies...">
+                </div>
+                <div class="lang-search-box" style="position: relative; max-width: 210px;">
+                    <i class="fas fa-globe" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--primary-color); font-size: 13px; z-index: 2; pointer-events: none;"></i>
+                    <input type="text" class="language-hybrid-input" placeholder="🌐 Search / Select Language..." list="worldLanguagesList" style="width: 100%; padding: 0.65rem 0.65rem 0.65rem 34px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; font-size: 13px; outline: none;">
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="#movies">Movies</a></li>
+
+                <li id="watchlistLink" style="display:none;"><a href="watchlist.html">Watchlist</a></li>
+                <li id="authLink"><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user) {
+                document.getElementById('authLink').innerHTML = `
+                <a href="profile.html"><i class="fas fa-user-circle"></i> Profile</a>
+                <a href="javascript:void(0)" onclick="logout()" class="nav-logout"><i class="fas fa-sign-out-alt"></i></a>
+            `;
+                document.getElementById('watchlistLink').style.display = 'inline-block';
+            }
+        });
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="badge badge-primary"><i class="fas fa-sparkles"></i> NEXT-GEN CINEMA PLATFORM</span>
+            <h1 class="hero-title">Discover & Stream <span class="text-primary">Cinema</span></h1>
+            <p class="hero-subtitle">Your ultimate destination for live movie discovery, free full-length MP4 downloads, official trailers, and interactive AI movie assistance.</p>
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="CineMatch AI.toggle()"><i class="fas fa-robot"></i> Ask CineMatch AI AI</button>
+                <button class="btn btn-primary" onclick="UI.openRouletteModal()" style="background: linear-gradient(135deg, #fbc02d, #f57f17); border: none; color: #000; font-weight: 700; box-shadow: 0 4px 20px rgba(245,197,24,0.4);"><i class="fas fa-dice text-dark"></i> AI Cinema Roulette</button>
+                <a href="#movies" class="btn btn-outline"><i class="fas fa-film"></i> Explore Movies</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Advanced Multi-Filter Section -->
+        <section class="section filter-section" style="padding-bottom: 0;">
+            <div class="filter-bar glass-card">
+                <!-- Single Hybrid Language Selector -->
+                <div class="filter-group" style="flex: 1.2; min-width: 240px;">
+                    <label><i class="fas fa-globe text-primary"></i> Audio / Language:</label>
+                    <div style="position: relative;">
+                        <i class="fas fa-globe" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--primary-color); font-size: 13px; z-index: 2; pointer-events: none;"></i>
+                        <input type="text" class="language-hybrid-input" placeholder="🌐 Search or Select Language..." list="worldLanguagesList" style="width: 100%; padding: 0.65rem 0.65rem 0.65rem 34px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; font-size: 13px; outline: none;">
+                    </div>
+                    <datalist id="worldLanguagesList">
+                        <option value="All Languages (World)">
+                        <option value="Tamil">
+                        <option value="Hindi">
+                        <option value="Telugu">
+                        <option value="English">
+                        <option value="Malayalam">
+                        <option value="Kannada">
+                        <option value="Marathi">
+                        <option value="Bengali">
+                        <option value="Punjabi">
+                        <option value="Gujarati">
+                        <option value="Urdu">
+                        <option value="Spanish">
+                        <option value="French">
+                        <option value="Japanese">
+                        <option value="Korean">
+                        <option value="German">
+                        <option value="Italian">
+                        <option value="Russian">
+                        <option value="Chinese">
+                        <option value="Arabic">
+                        <option value="Portuguese">
+                        <option value="Turkish">
+                        <option value="Polish">
+                        <option value="Dutch">
+                        <option value="Swedish">
+                        <option value="Vietnamese">
+                        <option value="Thai">
+                    </datalist>
+                </div>
+
+                <!-- Sort Filter -->
+                <div class="filter-group">
+                    <label><i class="fas fa-sort-amount-down text-primary"></i> Sort By:</label>
+                    <select id="sortFilter" class="select-input">
+                        <option value="popularity.desc">Most Popular</option>
+                        <option value="vote_average.desc">Highest Rated</option>
+                        <option value="primary_release_date.desc">Release Date (Newest)</option>
+                        <option value="original_title.asc">Title (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Genre Pills Bar -->
+            <div class="genre-pills-bar" id="genrePills">
+                <button class="genre-pill active" data-genre="">All Genres</button>
+                <button class="genre-pill" data-genre="28">Action</button>
+                <button class="genre-pill" data-genre="878">Sci-Fi</button>
+                <button class="genre-pill" data-genre="35">Comedy</button>
+                <button class="genre-pill" data-genre="27">Horror</button>
+                <button class="genre-pill" data-genre="16">Animation</button>
+                <button class="genre-pill" data-genre="18">Drama</button>
+                <button class="genre-pill" data-genre="12">Adventure</button>
+                <button class="genre-pill" data-genre="10749">Romance</button>
+            </div>
+        </section>
+
+        <!-- AI Watch History Recommendation Section (Logged-In Users Only) -->
+        <section id="recommendationsSection" class="section" style="display: none; margin-bottom: 30px;">
+            <button onclick="app.toggleRecommendations()" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: rgba(245,197,24,0.08); border: 1px solid rgba(245,197,24,0.3); padding: 14px 22px; border-radius: 14px; color: #fff; cursor: pointer; font-size: 16px; font-weight: 600; text-align: left; transition: all 0.3s ease;" onmouseenter="this.style.background='rgba(245,197,24,0.16)'" onmouseleave="this.style.background='rgba(245,197,24,0.08)'">
+                <span><i class="fas fa-magic text-primary" style="margin-right: 8px;"></i> <span id="recommendationTitle">Recommended For You (Personalized AI Predictions)</span></span>
+                <i id="recToggleIcon" class="fas fa-chevron-down text-primary" style="transition: transform 0.3s ease;"></i>
+            </button>
+            <div id="recommendationsContent" style="display: none; margin-top: 20px;">
+                <div class="movie-grid" id="recommendedMovies">
+                    <!-- AI & Watch History recommendations injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- People Matcher Section (Collaborative Filtering) -->
+        <section id="peopleMatcherSection" class="section" style="display: none; margin-bottom: 30px;">
+            <button style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: rgba(50,205,50,0.08); border: 1px solid rgba(50,205,50,0.3); padding: 14px 22px; border-radius: 14px; color: #fff; cursor: default; font-size: 16px; font-weight: 600; text-align: left;">
+                <span><i class="fas fa-users" style="color: #32cd32; margin-right: 8px;"></i> ✨ People Like You Also Watched</span>
+            </button>
+            <div style="margin-top: 20px;">
+                <div class="movie-grid" id="peopleMatcherMovies">
+                    <!-- People Matcher recommendations injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Section -->
+        <section id="movies" class="section">
+            <h2 class="section-title">Trending & Live Discover</h2>
+            <div class="movie-grid" id="featuredMovies">
+                <!-- Movie cards will be injected here by app.js -->
+            </div>
+        </section>
+
+        <!-- Top Rated Section -->
+        <section id="top-rated" class="section">
+            <h2 class="section-title">Top Rated Cinema</h2>
+            <div class="movie-grid" id="topRatedMovies">
+                <!-- Top rated cards injected here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <span class="logo-accent">Cine</span>Sphere
+            </div>
+            <p>&copy; 2026 CineMatch Movie Database. Netmirror AI Demonstration Project.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/api.js?v=40"></script>
+    <script src="assets/js/movies.js?v=40"></script>
+    <script src="assets/js/state.js?v=40"></script>
+    <script src="assets/js/ui.js?v=40"></script>
+
+    <script src="assets/js/chatbot.js?v=40"></script>
+    <script src="assets/js/recommendations.js?v=40"></script>
+    <script src="assets/js/app.js?v=40"></script>
+</body>
+</html>

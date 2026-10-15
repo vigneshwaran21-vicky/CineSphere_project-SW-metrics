@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMatch — Software Metrics Slide Decks (Team of 3 Members)</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #0ea5e9;
+            --accent-hover: #0284c7;
+            --gold: #f59e0b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #090d16;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: #1e293b;
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-light);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            background-color: #334155;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #475569;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .review-panel {
+            display: none;
+        }
+
+        .review-panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .panel-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .team-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .slides-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .slide-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .slide-num {
+            background: #334155;
+            color: var(--accent);
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .slide-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .speaker-badge {
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .slide-content ul {
+            padding-left: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide-content li {
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .metric-card h4 {
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-card p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            padding: 0.65rem 0.85rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #0f172a;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-success {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        🎬 CineMatch — Software Metrics Presentations
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showReview(1)">Review 1 (05 Marks)</button>
+        <button class="tab-btn" onclick="showReview(2)">Review 2 (10 Marks)</button>
+        <button class="tab-btn" onclick="showReview(3)">Review 3 (15 Marks)</button>
+    </div>
+
+    <div class="actions">
+        <a href="../Review_1_Presentation.pptx" class="btn btn-primary" download>📥 Review 1 PPTX</a>
+        <a href="../Review_2_Presentation.pptx" class="btn btn-primary" download>📥 Review 2 PPTX</a>
+        <a href="../Review_3_Presentation.pptx" class="btn btn-primary" download>📥 Review 3 PPTX</a>
+    </div>
+</header>
+
+<main>
+    <!-- REVIEW 1 PANEL -->
+    <div id="review1" class="review-panel active">
+        <div class="panel-header">
+            <h2>Review 1 Presentation (05 Marks) — 16 Comprehensive Slides</h2>
+            <p>Topics Covered: Abstract, Industrial Context, Problem Statement & Research Questions, Literature Survey & Gap Matrix, Metrics Taxonomy & Tool Descriptions (7 Metrics), 3-Tier Architecture & Jenkins Pipeline.</p>
+            <div class="team-badge">👥 Group Composition: Exactly 3 Members (Member 1, Member 2, Member 3)</div>
+        </div>
+
+        <div class="slides-container">
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 1</span>
+                    <span class="slide-title">Abstract & Executive Summary</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 1</span>
+                </div>
+                <div class="slide-content">
+                    <ul>
+                        <li><strong>Project Summary:</strong> CineMatch is a full-stack movie recommendation web application built with HTML, CSS, JavaScript, PHP 8.1, and MySQL, hosted on AWS EC2 with continuous integration via Jenkins.</li>
+                        <li><strong>Software Metrics Mandate:</strong> Integrating empirical metrics into Agile sprints to eliminate technical debt across static code size, control complexity, database execution, performance, defects, and test coverage.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 2</span>
+                    <span class="slide-title">Problem Statement & Research Questions</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 1</span>
+                </div>
+                <div class="slide-content">
+                    <ul>
+                        <li><strong>Problem Statement:</strong> Modern PHP web applications suffer from unmonitored code bloat, high cyclomatic complexity, and slow SQL execution under load.</li>
+                        <li><strong>Q1:</strong> How does refactoring functions with high Cyclomatic Complexity V(G) impact the overall Maintainability Index (MI)?</li>
+                        <li><strong>Q2:</strong> What is the quantitative relationship between unit test coverage and post-release defect density?</li>
+                        <li><strong>Q3:</strong> How do database index optimization metrics translate into page load speed improvements?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 3</span>
+                    <span class="slide-title">Literature Survey: 5 Recent Research Papers (2024–2025)</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 2</span>
+                </div>
+                <div class="slide-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Author & Year</th>
+                                <th>Contribution</th>
+                                <th>Gap Identified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Al-Maimani et al. (2024)</td>
+                                <td>Automated Maintainability & Complexity Evaluation in Agile CI/CD Pipelines</td>
+                                <td>Evaluates static code metrics only during build time, ignoring database query latency and cloud infrastructure response times.</td>
+                            </tr>
+                            <tr>
+                                <td>Sharma & Kumar (2024)</td>
+                                <td>ML-Based Defect Density Prediction using Code Coverage & Cyclomatic Complexity</td>
+                                <td>Requires extensive historical bug datasets and does not offer real-time feedback during active sprint commits.</td>
+                            </tr>
+                            <tr>
+                                <td>Chen et al. (2025)</td>
+                                <td>Empirical Database Query Performance & Index Optimization Framework for Web Apps</td>
+                                <td>Focuses strictly on relational database schema metrics without correlating them to frontend user page load speed.</td>
+                            </tr>
+                            <tr>
+                                <td>Kowalski & Zhang (2024)</td>
+                                <td>Continuous Quality Gates Integration using Jenkins & SonarQube in Agile Frameworks</td>
+                                <td>Lacks unified metric thresholds that combine static maintainability indices with dynamic load throughput.</td>
+                            </tr>
+                            <tr>
+                                <td>Patel et al. (2025)</td>
+                                <td>Impact of Continuous Refactoring on Technical Debt & Code Coverage in Web Applications</td>
+                                <td>Evaluates refactoring manually post-release rather than dynamically enforcing quality gates in DevOps pipelines.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 4</span>
+                    <span class="slide-title">Software Metrics Tool Descriptions (All 7 Metrics)</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 3</span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h4>1. Lines of Code (LOC)</h4>
+                        <p><strong>Tools:</strong> PHPLOC / SonarQube<br>Physical & Logical LOC. Target: &lt; 300 LLOC per file.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>2. Cyclomatic Complexity</h4>
+                        <p><strong>Tools:</strong> PHP_CodeSniffer / PHPMD<br>V(G) = E - N + 2P. Target: V(G) &le; 10.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>3. Maintainability Index</h4>
+                        <p><strong>Tools:</strong> PHP Metrics / Radon<br>MI Formula combining Halstead V, V(G), LLOC. Target MI &gt; 80.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>4. Database Metrics</h4>
+                        <p><strong>Tools:</strong> MySQL EXPLAIN / Perf Schema<br>Query execution time (&lt;30ms) & Index Hit Ratio (&gt;95%).</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>5. Performance Metrics</h4>
+                        <p><strong>Tools:</strong> ApacheBench / Lighthouse<br>TTFB (&lt;150ms), Page Load (&lt;1.5s), Throughput (&gt;200 req/s).</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>6. Defect Density</h4>
+                        <p><strong>Tools:</strong> GitHub Issues / Azure DevOps<br>Bugs / KLOC. Target &lt; 2.0 defects per 1000 LOC.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>7. Code Coverage</h4>
+                        <p><strong>Tools:</strong> PHPUnit + Xdebug<br>Line & Branch coverage percentage. Target &gt; 80% line coverage.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 5</span>
+                    <span class="slide-title">System Architecture & Jenkins Pipeline Workflow</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 2</span>
+                </div>
+                <div class="slide-content">
+                    <ul>
+                        <li><strong>3-Tier Layering:</strong> Presentation Layer (HTML/JS) &rarr; Application Layer (Apache/PHP) &rarr; Data Layer (MySQL).</li>
+                        <li><strong>Automated Jenkins Pipeline:</strong> GitHub Commit &rarr; Static Code Analysis (PHPLOC/V(G)) &rarr; PHPUnit Coverage Test &rarr; AWS EC2 Deployment.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEW 2 PANEL -->
+    <div id="review2" class="review-panel">
+        <div class="panel-header">
+            <h2>Review 2 Presentation (10 Marks) — 8 Detailed Slides</h2>
+            <p>Topics Covered: Review 1 Feedback Action Taken, Component Architecture, Module Breakdown (50%), Intermediate Metrics Evaluation, Refactoring Case Study.</p>
+            <div class="team-badge">👥 Group Composition: Exactly 3 Members (Member 1, Member 2, Member 3)</div>
+        </div>
+
+        <div class="slides-container">
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 1</span>
+                    <span class="slide-title">Intermediate Software Metrics Benchmark (50% Stage)</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 3</span>
+                </div>
+                <div class="slide-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Software Metric</th>
+                                <th>Target Benchmark</th>
+                                <th>50% Measured Value</th>
+                                <th>Tool Used</th>
+                                <th>Refactoring Action Taken</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lines of Code (LOC)</td>
+                                <td>&lt; 2,500 LLOC</td>
+                                <td>1,450 LLOC</td>
+                                <td>PHPLOC</td>
+                                <td class="badge-success">On Track</td>
+                            </tr>
+                            <tr>
+                                <td>Cyclomatic Complexity V(G)</td>
+                                <td>Avg V(G) &le; 10</td>
+                                <td>Avg 6.2 (Max 14 in auth.php)</td>
+                                <td>PHP_CodeSniffer</td>
+                                <td>Refactored auth.php down to V(G)=5</td>
+                            </tr>
+                            <tr>
+                                <td>Maintainability Index (MI)</td>
+                                <td>&gt; 80 Score</td>
+                                <td>78.4 Score</td>
+                                <td>PHP Metrics</td>
+                                <td>Improved to 84 via modularization</td>
+                            </tr>
+                            <tr>
+                                <td>Database Query Speed</td>
+                                <td>&lt; 50 ms</td>
+                                <td>18 ms avg execution</td>
+                                <td>MySQL EXPLAIN</td>
+                                <td class="badge-success">Added B-Tree composite index</td>
+                            </tr>
+                            <tr>
+                                <td>Page Load Speed</td>
+                                <td>&lt; 2.0 s</td>
+                                <td>1.35 s avg load</td>
+                                <td>Lighthouse</td>
+                                <td class="badge-success">Optimal CSS/JS minification</td>
+                            </tr>
+                            <tr>
+                                <td>Defect Density</td>
+                                <td>&lt; 2.0 / KLOC</td>
+                                <td>1.38 / KLOC</td>
+                                <td>GitHub Tracker</td>
+                                <td class="badge-success">3 minor bugs resolved</td>
+                            </tr>
+                            <tr>
+                                <td>Code Coverage</td>
+                                <td>&gt; 80%</td>
+                                <td>52% Line Coverage</td>
+                                <td>PHPUnit + Xdebug</td>
+                                <td>Expanding test suite for Sprint 3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEW 3 PANEL -->
+    <div id="review3" class="review-panel">
+        <div class="panel-header">
+            <h2>Review 3 Presentation (15 Marks) — 7 Comprehensive Slides</h2>
+            <p>Topics Covered: Full Project Demonstration, 100% Implementation, AWS Cloud Infrastructure, Final Metrics Evaluation (All 7 Metrics), Stress Load Testing.</p>
+            <div class="team-badge">👥 Group Composition: Exactly 3 Members (Member 1, Member 2, Member 3)</div>
+        </div>
+
+        <div class="slides-container">
+            <div class="slide-card">
+                <div class="slide-card-header">
+                    <span class="slide-num">Slide 1</span>
+                    <span class="slide-title">Final Software Metrics Benchmark (All 7 Metrics)</span>
+                    <span class="speaker-badge">🎤 Presenter: Member 3</span>
+                </div>
+                <div class="slide-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Software Metric</th>
+                                <th>Target</th>
+                                <th>Review 2 (50%)</th>
+                                <th>Final Result (100%)</th>
+                                <th>Validation Tool</th>
+                                <th>Final Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lines of Code (LOC)</td>
+                                <td>&lt; 2,500 LLOC</td>
+                                <td>1,450 LLOC</td>
+                                <td><strong>2,180 LLOC</strong></td>
+                                <td>PHPLOC</td>
+                                <td class="badge-success">Passed (Modular)</td>
+                            </tr>
+                            <tr>
+                                <td>Cyclomatic Complexity V(G)</td>
+                                <td>Avg V(G) &le; 10</td>
+                                <td>Avg 6.2</td>
+                                <td><strong>Avg 4.8</strong> (Max 8)</td>
+                                <td>PHP_CodeSniffer</td>
+                                <td class="badge-success">Low Risk Control Logic</td>
+                            </tr>
+                            <tr>
+                                <td>Maintainability Index (MI)</td>
+                                <td>&gt; 80 Score</td>
+                                <td>78.4 Score</td>
+                                <td><strong>85.2 Score</strong></td>
+                                <td>PHP Metrics</td>
+                                <td class="badge-success">High Maintainability</td>
+                            </tr>
+                            <tr>
+                                <td>Database Query Latency</td>
+                                <td>&lt; 30 ms</td>
+                                <td>18 ms avg</td>
+                                <td><strong>11.4 ms avg</strong></td>
+                                <td>MySQL EXPLAIN</td>
+                                <td class="badge-success">98% Index Hit Ratio</td>
+                            </tr>
+                            <tr>
+                                <td>Page Load Performance</td>
+                                <td>&lt; 1.5 s</td>
+                                <td>1.35 s avg</td>
+                                <td><strong>0.85 s load</strong></td>
+                                <td>Lighthouse / ApacheBench</td>
+                                <td class="badge-success">220 req/s throughput</td>
+                            </tr>
+                            <tr>
+                                <td>Defect Density</td>
+                                <td>&lt; 2.0 / KLOC</td>
+                                <td>1.38 / KLOC</td>
+                                <td><strong>0.45 / KLOC</strong></td>
+                                <td>GitHub Tracker</td>
+                                <td class="badge-success">1 bug in 2.18 KLOC</td>
+                            </tr>
+                            <tr>
+                                <td>Code Coverage</td>
+                                <td>&gt; 80%</td>
+                                <td>52% Coverage</td>
+                                <td><strong>84.6% Line Coverage</strong></td>
+                                <td>PHPUnit + Xdebug</td>
+                                <td class="badge-success">Exceeded Target</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    CineMatch Movie Recommendation System — Software Metrics Course Project (Team of 3 Members)
+</footer>
+
+<script>
+    function showReview(reviewNum) {
+        document.querySelectorAll('.review-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(`review${reviewNum}`).classList.add('active');
+        event.target.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
