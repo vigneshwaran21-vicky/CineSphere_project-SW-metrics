@@ -598,12 +598,21 @@
 
 /* Auth Pages (Login, Register, Forgot Password) */
 .auth-container {
-    background: #1a1a1a !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: transparent !important;
+    border: none !important;
     color: #ffffff !important;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
-    margin: 110px auto 40px auto !important;
-    border-radius: 20px !important;
+    box-shadow: none !important;
+    max-width: 440px !important;
+    margin: 90px auto 40px auto !important;
+    padding: 0 15px !important;
+}
+
+.auth-form {
+    background: #1a1a1e !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+    padding: 35px 30px !important;
 }
 
 .auth-header h2 {

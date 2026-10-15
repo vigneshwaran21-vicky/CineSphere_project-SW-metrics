@@ -9,10 +9,11 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <style>
-        .auth-container { max-width: 400px; margin: 100px auto; text-align: center; }
-        .auth-form { padding: 30px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
-        .auth-input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; }
-        .auth-btn { width: 100%; padding: 12px; }
+        .auth-container { max-width: 420px; margin: 90px auto 40px auto; background: transparent !important; border: none !important; box-shadow: none !important; }
+        .auth-form { padding: 35px 30px; border-radius: 16px; background: #1a1a1e; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 15px 35px rgba(0,0,0,0.5); text-align: center; }
+        .auth-input { width: 100%; padding: 12px 14px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #26262b; color: #fff; font-size: 15px; }
+        .auth-input:focus { border-color: #f5c518; outline: none; box-shadow: 0 0 0 2px rgba(245,197,24,0.2); }
+        .auth-btn { width: 100%; padding: 13px; font-size: 15px; font-weight: 700; border-radius: 8px; }
         .error-msg { color: #ff4d4d; margin-bottom: 15px; display: none; }
     </style>
 </head>
@@ -28,7 +29,7 @@
                 <i class="fas fa-arrow-left"></i> Back to Home
             </a>
         </div>
-        <div class="auth-form glass-card">
+        <div class="auth-form">
             <h2>Login</h2>
             <br>
             <form id="loginForm">
