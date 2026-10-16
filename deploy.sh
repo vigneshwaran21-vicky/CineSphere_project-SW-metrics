@@ -12,9 +12,14 @@ WEB_ROOT="/var/www/html"
 echo "🎬 CineSphere Deploy Starting..."
 
 # ── 1. Pull latest code from GitHub ─────────────────────────
-cd "$SITE_DIR"
+cd "$SITE_DIR" 2>/dev/null || cd "$WEB_ROOT"
 git config --global --add safe.directory "$SITE_DIR" 2>/dev/null || true
-git pull origin main
+git config --global --add safe.directory "*" 2>/dev/null || true
+git reset --hard HEAD 2>/dev/null || true
+git clean -fd 2>/dev/null || true
+git fetch origin main -q
+git reset --hard origin/main -q
+git clean -fd
 echo "✅ Code pulled from GitHub"
 
 # ── 2. Fix Apache DocumentRoot (idempotent) ──────────────────

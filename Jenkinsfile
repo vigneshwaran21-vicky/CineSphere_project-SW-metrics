@@ -226,8 +226,7 @@ pipeline {
                     for /f "delims=" %%i in ('whoami') do icacls "%SSH_KEY%" /inheritance:r /grant:r "%%i:F" >nul
                     
                     echo Deploying to EC2 instance ${EC2_HOST}...
-                    ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no %SSH_USER%@${EC2_HOST} ^
-                    "sudo mkdir -p /var/www/html && cd /var/www/html && sudo git init -q && sudo git config --global --add safe.directory /var/www/html && sudo git remote remove origin 2>/dev/null ; sudo git remote add origin ${GIT_REPO} && sudo git fetch origin -q && sudo git reset --hard origin/main -q && sudo bash deploy.sh && echo 'Deployment completed successfully!'"
+                    ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no %SSH_USER%@${EC2_HOST} "sudo git config --global --add safe.directory '*' ; if [ -d /var/www/html/CineSphere/.git ]; then cd /var/www/html/CineSphere && sudo git reset --hard HEAD && sudo git clean -fd && sudo git fetch origin main -q && sudo git reset --hard origin/main -q ; fi ; cd /var/www/html && if [ ! -d .git ]; then sudo git init -q ; fi ; sudo git remote remove origin 2>/dev/null ; sudo git remote add origin ${GIT_REPO} && sudo git fetch origin -q && sudo git reset --hard origin/main -q && sudo git clean -fd && (if [ -f /var/www/html/deploy.sh ]; then sudo bash /var/www/html/deploy.sh; elif [ -f /var/www/html/CineSphere/deploy.sh ]; then sudo bash /var/www/html/CineSphere/deploy.sh; fi) && echo 'Deployment completed successfully!'"
                     """
                 }
             }
