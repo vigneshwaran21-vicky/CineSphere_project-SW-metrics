@@ -3,12 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile | CineMatch</title>
+    <title>User Profile & Preferences | CineSphere</title>
     <!-- CSS Links -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <style>
+        .pref-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+        .pref-chip:hover {
+            border-color: rgba(245, 197, 24, 0.5);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .pref-chip.active {
+            background: #f5c518 !important;
+            color: #121212 !important;
+            border-color: #f5c518 !important;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(245, 197, 24, 0.35);
+        }
+        .pref-chip.active i.check-icon {
+            display: inline-block !important;
+        }
+        .pref-chip i.check-icon {
+            display: none;
+            font-size: 11px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar glass-card">
@@ -22,13 +58,39 @@
         </div>
     </nav>
     <main class="container" style="padding-top: 100px; padding-bottom: 100px;">
-        <div class="glass-card pd-2" style="max-width: 600px; margin: 0 auto 50px;">
-            <h2 class="section-title">My Profile</h2>
-            <div style="font-size: 1.1rem; margin-bottom: 20px;">
-                <p style="margin-bottom:10px;"><strong>Name:</strong> <span id="profName" style="color:var(--text-muted);"></span></p>
-                <p><strong>Email:</strong> <span id="profEmail" style="color:var(--text-muted);"></span></p>
+        <div class="glass-card pd-2" style="max-width: 620px; margin: 0 auto 50px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin: 0;">My Profile</h2>
+                <button onclick="openPrefModal()" class="btn btn-primary btn-sm" style="font-size: 13px; padding: 7px 16px; border-radius: 8px;">
+                    <i class="fas fa-sliders-h"></i> Edit Preferences
+                </button>
             </div>
-            <button onclick="logout()" class="btn btn-outline" style="width:100%; border-color:#ff4d4d; color:#ff4d4d;">Logout Securely</button>
+
+            <div style="font-size: 1.05rem; margin-bottom: 20px;">
+                <p style="margin-bottom:10px;"><strong>Name:</strong> <span id="profName" style="color:var(--text-muted);"></span></p>
+                <p style="margin-bottom:20px;"><strong>Email:</strong> <span id="profEmail" style="color:var(--text-muted);"></span></p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0; color: var(--primary-color);"><i class="fas fa-heart text-primary"></i> My Taste Profile</h4>
+                    <span style="font-size: 12px; color: #888;">Powers AI Recommendations</span>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.05); padding: 18px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08);">
+                    <p style="margin-bottom:10px; font-size:14px; line-height: 1.6;">
+                        <strong>Favorite Genres:</strong> <span id="profGenres"></span>
+                    </p>
+                    <p style="margin-bottom:10px; font-size:14px; line-height: 1.6;">
+                        <strong>Preferred Languages:</strong> <span id="profLanguages"></span>
+                    </p>
+                    <p style="margin:0; font-size:14px;">
+                        <strong>Rating Filter:</strong> <span id="profMinRating" style="color:#fbc02d; font-weight:600;">Any</span>
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="btn btn-outline" style="width:100%; border-color:#ff4d4d; color:#ff4d4d;">
+                <i class="fas fa-sign-out-alt"></i> Logout Securely
+            </button>
         </div>
 
         <h2 class="section-title">My Ratings & Reviews</h2>
@@ -37,11 +99,94 @@
         </div>
     </main>
 
+    <!-- Interactive Edit Preferences Modal -->
+    <div id="prefModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+        <div class="glass-card" style="width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; padding: 28px; border-radius: 18px; background: #1a1a1e; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 25px 60px rgba(0,0,0,0.85);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                <h3 style="margin: 0; display: flex; align-items: center; gap: 10px; font-size: 1.25rem;">
+                    <i class="fas fa-sliders-h text-primary"></i> Edit Profile & Movie Preferences
+                </h3>
+                <button onclick="closePrefModal()" style="background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+            </div>
+
+            <!-- Profile Display Name -->
+            <div style="margin-bottom: 22px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #bbb; margin-bottom: 8px;">
+                    <i class="fas fa-user text-primary"></i> Display Name
+                </label>
+                <input type="text" id="editNameInput" class="auth-input" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #26262b; color: #fff; font-size: 14px;" placeholder="Your Name">
+            </div>
+
+            <!-- Favorite Genres Multi-Select -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #bbb; margin-bottom: 8px;">
+                    <i class="fas fa-film text-primary"></i> Favorite Genres <span style="font-weight: 400; color: #777;">(select all that you love)</span>
+                </label>
+                <div id="genreChipsContainer" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+
+            <!-- Preferred Languages Multi-Select -->
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #bbb; margin-bottom: 8px;">
+                    <i class="fas fa-globe text-primary"></i> Preferred Languages <span style="font-weight: 400; color: #777;">(tap to toggle)</span>
+                </label>
+                <div id="langChipsContainer" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            </div>
+
+            <!-- Minimum Rating Preference -->
+            <div style="margin-bottom: 28px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #bbb; margin-bottom: 8px;">
+                    <i class="fas fa-star text-primary"></i> Minimum Rating Threshold
+                </label>
+                <select id="editMinRating" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #26262b; color: #fff; font-size: 14px; cursor: pointer;">
+                    <option value="0">Any Rating (Show all recommended movies)</option>
+                    <option value="6">⭐ 6.0+ (Decent & Above)</option>
+                    <option value="7">⭐ 7.0+ (Good & High Rated)</option>
+                    <option value="8">⭐ 8.0+ (Top Masterpieces only)</option>
+                </select>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button onclick="closePrefModal()" class="btn btn-outline" style="padding: 11px 22px; font-size: 14px;">Cancel</button>
+                <button onclick="savePreferences()" class="btn btn-primary" style="padding: 11px 26px; font-size: 14px; font-weight: 700;">
+                    <i class="fas fa-check"></i> Save Preferences
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/api.js"></script>
     <script src="assets/js/ui.js"></script>
     <script>
         const user = JSON.parse(localStorage.getItem('user'));
         
+        const AVAILABLE_GENRES = [
+            { name: 'Action', icon: 'fa-bolt' },
+            { name: 'Sci-Fi', icon: 'fa-atom' },
+            { name: 'Comedy', icon: 'fa-laugh' },
+            { name: 'Horror', icon: 'fa-ghost' },
+            { name: 'Animation', icon: 'fa-palette' },
+            { name: 'Drama', icon: 'fa-theater-masks' },
+            { name: 'Romance', icon: 'fa-heart' },
+            { name: 'Thriller', icon: 'fa-skull-crossbones' },
+            { name: 'Adventure', icon: 'fa-compass' },
+            { name: 'Mystery', icon: 'fa-search' },
+            { name: 'Crime', icon: 'fa-fingerprint' },
+            { name: 'Fantasy', icon: 'fa-dragon' }
+        ];
+
+        const AVAILABLE_LANGUAGES = [
+            { code: 'en', name: 'English', flag: '🇺🇸' },
+            { code: 'hi', name: 'Hindi', flag: '🇮🇳' },
+            { code: 'ta', name: 'Tamil', flag: '🇮🇳' },
+            { code: 'te', name: 'Telugu', flag: '🇮🇳' },
+            { code: 'ja', name: 'Japanese (Anime)', flag: '🇯🇵' },
+            { code: 'ko', name: 'Korean', flag: '🇰🇷' },
+            { code: 'es', name: 'Spanish', flag: '🇪🇸' },
+            { code: 'fr', name: 'French', flag: '🇫🇷' }
+        ];
+
         if (!user) {
             window.location.href = 'login.html';
         } else {
@@ -52,7 +197,112 @@
             document.getElementById('watchlistLink').style.display = 'inline-block';
             document.getElementById('profName').textContent = user.name;
             document.getElementById('profEmail').textContent = user.email;
+            
+            renderTasteProfile();
             loadMyReviews();
+        }
+
+        function renderTasteProfile() {
+            try {
+                const prefs = JSON.parse(localStorage.getItem('cinematch_user_prefs')) || {};
+                const genres = prefs.topGenres || [];
+                const langs = prefs.topLanguages || [];
+                const minRating = prefs.minRating || 0;
+                
+                document.getElementById('profGenres').innerHTML = genres.length > 0 
+                    ? genres.map(g => `<span class="badge badge-primary" style="font-size:12px; margin-right:6px; margin-bottom:4px; display:inline-block;"><i class="fas fa-check-circle" style="font-size:10px;"></i> ${g}</span>`).join('')
+                    : '<span style="color:#777; font-style:italic;">No genres selected yet. Click "Edit Preferences"!</span>';
+                    
+                document.getElementById('profLanguages').innerHTML = langs.length > 0
+                    ? langs.map(l => {
+                        const found = AVAILABLE_LANGUAGES.find(al => al.code === l.toLowerCase());
+                        const label = found ? `${found.flag} ${found.name}` : l.toUpperCase();
+                        return `<span class="badge" style="background:#333; color:#fff; font-size:12px; margin-right:6px; margin-bottom:4px; display:inline-block;">${label}</span>`;
+                    }).join('')
+                    : '<span style="color:#777; font-style:italic;">All languages</span>';
+
+                document.getElementById('profMinRating').textContent = minRating > 0 ? `⭐ ${minRating}.0+ Rating` : 'Any (All Movies)';
+            } catch(e) {}
+        }
+
+        function openPrefModal() {
+            const modal = document.getElementById('prefModal');
+            document.getElementById('editNameInput').value = user.name || '';
+            
+            const prefs = JSON.parse(localStorage.getItem('cinematch_user_prefs')) || {};
+            const userGenres = prefs.topGenres || [];
+            const userLangs = (prefs.topLanguages || []).map(l => l.toLowerCase());
+            document.getElementById('editMinRating').value = prefs.minRating || '0';
+
+            // Build Genre Chips
+            const genreContainer = document.getElementById('genreChipsContainer');
+            genreContainer.innerHTML = AVAILABLE_GENRES.map(g => {
+                const isActive = userGenres.includes(g.name);
+                return `
+                    <div class="pref-chip ${isActive ? 'active' : ''}" data-genre="${g.name}" onclick="toggleChip(this)">
+                        <i class="fas ${g.icon}"></i> ${g.name}
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                `;
+            }).join('');
+
+            // Build Language Chips
+            const langContainer = document.getElementById('langChipsContainer');
+            langContainer.innerHTML = AVAILABLE_LANGUAGES.map(l => {
+                const isActive = userLangs.includes(l.code);
+                return `
+                    <div class="pref-chip ${isActive ? 'active' : ''}" data-lang="${l.code}" onclick="toggleChip(this)">
+                        ${l.flag} ${l.name}
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                `;
+            }).join('');
+
+            modal.style.display = 'flex';
+        }
+
+        function closePrefModal() {
+            document.getElementById('prefModal').style.display = 'none';
+        }
+
+        function toggleChip(el) {
+            el.classList.toggle('active');
+        }
+
+        function savePreferences() {
+            // Save Name
+            const newName = document.getElementById('editNameInput').value.trim();
+            if (newName && newName.length >= 2) {
+                user.name = newName;
+                localStorage.setItem('user', JSON.stringify(user));
+                document.getElementById('profName').textContent = newName;
+            }
+
+            // Save Selected Genres
+            const selectedGenres = Array.from(document.querySelectorAll('#genreChipsContainer .pref-chip.active'))
+                .map(el => el.getAttribute('data-genre'));
+
+            // Save Selected Languages
+            const selectedLangs = Array.from(document.querySelectorAll('#langChipsContainer .pref-chip.active'))
+                .map(el => el.getAttribute('data-lang'));
+
+            const minRating = document.getElementById('editMinRating').value;
+
+            const prefs = JSON.parse(localStorage.getItem('cinematch_user_prefs')) || {};
+            prefs.topGenres = selectedGenres;
+            prefs.topLanguages = selectedLangs;
+            prefs.minRating = parseInt(minRating) || 0;
+
+            localStorage.setItem('cinematch_user_prefs', JSON.stringify(prefs));
+
+            renderTasteProfile();
+            closePrefModal();
+
+            if (typeof UI !== 'undefined' && UI.showToast) {
+                UI.showToast('Preferences updated successfully! Recommendations tailored to your taste.', 'success');
+            } else {
+                alert('Preferences saved successfully!');
+            }
         }
 
         function logout() {
@@ -71,7 +321,6 @@
 
             container.innerHTML = '<div style="margin:20px auto; border:4px solid rgba(255,255,255,0.1); border-top:4px solid var(--primary-color); border-radius:50%; width:30px; height:30px; animation:spin 1s linear infinite;"></div>';
             
-            // Map the reviews to the actual movie details concurrently via the Live API
             for(let r of reviews) {
                 const mov = await apiGetMovie(r.movie_id);
                 r.movie_title = (mov && !mov.error && !mov.message) ? mov.title : 'Unknown Title';
@@ -97,5 +346,7 @@
             }).join('');
         }
     </script>
+
+    <script src="assets/js/chatbot.js"></script>
 </body>
 </html>
