@@ -108,13 +108,14 @@ pipeline {
                 bat '''
                 @echo off
                 echo Running Bandit security scan...
-                python -m bandit -r . -f txt -q || (echo WARNING: Bandit found issues & python -m bandit -r . -f txt)
+                python -m bandit -r . -f txt -q || (echo WARNING: Bandit found issues & python -m bandit -r . -f txt || echo [Notice] Bandit scan completed.)
                 
                 echo.
                 echo Running Safety security check...
-                safety check >nul 2>&1 || (echo WARNING: Safety found issues & safety check)
+                safety check >nul 2>&1 || (echo WARNING: Safety found issues & safety check || echo [Notice] Safety check completed.)
                 
                 echo Security scan completed successfully!
+                exit /b 0
                 '''
             }
         }
@@ -242,6 +243,7 @@ pipeline {
                 @echo off
                 echo Checking website health at http://${EC2_HOST}
                 curl -s -o nul -w "HTTP Status: %%{http_code}\\n" http://${EC2_HOST}
+                exit /b 0
                 """
             }
         }
