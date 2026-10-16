@@ -1,7 +1,7 @@
-// Auto-detect base URL — works on localhost/CineMatch AND EC2 root (/)
+// Auto-detect base URL — works on localhost/CineSphere, localhost/CineMatch AND EC2 root (/)
 const BASE_URL = (() => {
     const path = window.location.pathname;
-    const match = path.match(/^(\/CineMatch)/i);
+    const match = path.match(/^(\/CineSphere|\/CineMatch)/i);
     return match ? match[1] + '/backend' : 'backend';
 })();
 
@@ -142,6 +142,15 @@ async function apiRemoveFromWatchlist(userId, movieId) {
 async function apiGetReviews(movieId) {
     try {
         const res = await fetch(`${BASE_URL}/reviews.php?action=movie&movie_id=${movieId}`);
+        return await res.json();
+    } catch { return []; }
+}
+
+async function apiGetUserReviews(userId) {
+    if (!userId) return [];
+    try {
+        const res = await fetch(`${BASE_URL}/reviews.php?action=user&user_id=${userId}&t=${new Date().getTime()}`);
+        if (!res.ok) return [];
         return await res.json();
     } catch { return []; }
 }

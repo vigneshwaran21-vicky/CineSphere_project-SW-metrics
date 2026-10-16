@@ -7,9 +7,9 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($action === 'movie') {
         $movie_id = isset($_GET['movie_id']) ? $_GET['movie_id'] : null;
-        if($movie_id){
+        if ($movie_id) {
             try {
-                $query = "SELECT r.id, r.comment, r.rating, r.created_at, u.name as user_name 
+                $query = "SELECT r.id, r.user_id, r.comment, r.rating, r.created_at, u.name as user_name 
                           FROM reviews r 
                           JOIN users u ON r.user_id = u.id 
                           WHERE r.movie_id = :movie_id
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     
                 $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($reviews);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 http_response_code(500);
                 echo json_encode(["message" => "Server error."]);
             }
@@ -30,19 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     } elseif ($action === 'user') {
         $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
-        if($user_id){
+        if ($user_id) {
             try {
-                $query = "SELECT id, movie_id, comment, rating, created_at 
-                          FROM reviews 
-                          WHERE user_id = :user_id
-                          ORDER BY created_at DESC";
+                $query = "SELECT r.id, r.user_id, r.movie_id, r.comment, r.rating, r.created_at, m.title as movie_title, m.image_url as movie_image 
+                          FROM reviews r 
+                          LEFT JOIN movies m ON r.movie_id = m.id 
+                          WHERE r.user_id = :user_id 
+                          ORDER BY r.created_at DESC";
                 $stmt = $conn->prepare($query);
                 $stmt->bindParam(":user_id", $user_id);
                 $stmt->execute();
     
                 $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($reviews);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 http_response_code(500);
                 echo json_encode(["message" => "Server error."]);
             }

@@ -1,4 +1,9 @@
-const BASE_URL = 'http://3.110.134.37/backend';
+// Auto-detect base URL — works on localhost/CineSphere, localhost/CineMatch AND EC2 root (/)
+const BASE_URL = (() => {
+    const path = window.location.pathname;
+    const match = path.match(/^(\/CineSphere|\/CineMatch)/i);
+    return match ? match[1] + '/backend' : 'backend';
+})();
 
 async function apiRegister(name, email, password) {
     try {
