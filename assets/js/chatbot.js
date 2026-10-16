@@ -313,14 +313,17 @@ const CineBot = {
         }
 
         // 6. Default Live Movie & Knowledge Search Fallback
-        const cleanSearch = text.replace(/\b(movies?|movives?|films?|cinemas?|padams?|padangals?|in\s+tamil|in\s+telugu|in\s+hindi|in\s+english|show\s+me|find|search\s+for|search|watch|download|trailer)\b/gi, '').trim();
+        const cleanSearch = text
+            .replace(/\b(i\s+need|i\s+want|can\s+you\s+give|can\s+you\s+find|can\s+you\s+show|give\s+me|find\s+me|show\s+me|tell\s+me\s+about|looking\s+for|search\s+for|search|find|movies?|movives?|films?|cinemas?|padams?|padangals?|in\s+tamil|in\s+telugu|in\s+hindi|in\s+english|watch|download|trailer|please)\b/gi, '')
+            .replace(/[^\w\s:]/gi, '')
+            .trim();
         const searchQuery = cleanSearch.length > 0 ? cleanSearch : text;
 
         const searchResults = typeof apiSearchMovies === 'function' ? await apiSearchMovies(searchQuery) : [];
         this.hideTyping();
 
         if (searchResults && searchResults.length > 0) {
-            const isHi = searchQuery.toLowerCase() === 'hi' || lower.includes('hi movie') || lower.includes('hi movive');
+            const isHi = searchQuery.toLowerCase() === 'hi' || lower.includes('hi movie') || lower.includes('hi movive') || lower.includes('need hi');
             const header = isHi ?
                 `🎬 Results for **"Hi"** (including Tamil release & *"Hi Nanna"*):` :
                 `🔍 Results for "${this.escapeHTML(searchQuery)}":`;

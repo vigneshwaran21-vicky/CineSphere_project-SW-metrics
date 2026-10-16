@@ -84,6 +84,24 @@ const CineRec = {
         const prefs = this.getUserPreferences();
         const watchedIds = new Set(history.map(h => String(h.id)));
 
+        const langEquivs = {
+            'ta': ['ta', 'tamil'],
+            'tamil': ['ta', 'tamil'],
+            'te': ['te', 'telugu'],
+            'telugu': ['te', 'telugu'],
+            'hi': ['hi', 'hindi'],
+            'hindi': ['hi', 'hindi'],
+            'en': ['en', 'english'],
+            'english': ['en', 'english'],
+            'ja': ['ja', 'japanese'],
+            'japanese': ['ja', 'japanese'],
+            'ko': ['ko', 'korean'],
+            'korean': ['ko', 'korean'],
+            'es': ['es', 'spanish'],
+            'fr': ['fr', 'french'],
+            'de': ['de', 'german']
+        };
+
         const scored = allMovies.map(movie => {
             let score = 0;
             
@@ -92,29 +110,36 @@ const CineRec = {
                 score -= 4;
             }
 
-            // Genre match score
+            // Genre match score based on user profile preferences
             if (movie.genre && prefs.topGenres && prefs.topGenres.length > 0) {
                 const movieGenres = movie.genre.toLowerCase();
                 prefs.topGenres.forEach((g, index) => {
                     if (movieGenres.includes(g.toLowerCase())) {
-                        score += (4 - index) * 3; // Higher weight for primary favorite genre
+                        score += 25 - (index * 4); // Heavy priority boost for edited genres
                     }
                 });
             }
 
-            // Language match score
+            // Language match score based on user profile preferences
             if (movie.original_language && prefs.topLanguages && prefs.topLanguages.length > 0) {
-                const mouselang = movie.original_language.toUpperCase();
+                const mLang = movie.original_language.toLowerCase().trim();
                 prefs.topLanguages.forEach(l => {
-                    if (mouselang === l.toUpperCase() || movie.original_language.toLowerCase().includes(l.toLowerCase())) {
-                        score += 5;
+                    const pLang = l.toLowerCase().trim();
+                    const equivs = langEquivs[pLang] || [pLang];
+                    if (equivs.includes(mLang) || mLang.includes(pLang)) {
+                        score += 30; // Heavy priority boost for edited language preferences
                     }
                 });
             }
 
-            // Rating score boost (e.g., 8.5 rating gives +4.25 score)
+            // Min Rating threshold score
             const r = parseFloat(movie.rating) || 7.0;
-            score += (r / 2);
+            const minR = parseFloat(prefs.minRating) || 0;
+            if (minR > 0 && r < minR) {
+                score -= 20; // Deprioritize below user's selected rating
+            } else {
+                score += (r * 1.5);
+            }
 
             return { movie, score };
         });
@@ -159,8 +184,12 @@ const CineRec = {
         const prefs = this.getUserPreferences();
         const sectionHeader = document.getElementById('recommendationTitle');
         if (sectionHeader) {
-            if (prefs.topGenres && prefs.topGenres.length > 0) {
-                sectionHeader.innerHTML = `Recommended For You <span style="font-size:13px;font-weight:400;color:var(--primary-color);margin-left:8px;">(${prefs.topGenres.slice(0, 2).join(' &bull; ')})</span>`;
+            const tags = [];
+            if (prefs.topGenres && prefs.topGenres.length > 0) tags.push(...prefs.topGenres.slice(0, 2));
+            if (prefs.topLanguages && prefs.topLanguages.length > 0) tags.push(...prefs.topLanguages.slice(0, 2).map(l => l.toUpperCase()));
+            
+            if (tags.length > 0) {
+                sectionHeader.innerHTML = `Recommended For You <span style="font-size:13px;font-weight:600;color:var(--primary-color);margin-left:8px;">(${tags.join(' &bull; ')})</span>`;
             } else {
                 sectionHeader.innerHTML = `Recommended For You <span style="font-size:13px;font-weight:400;color:var(--primary-color);margin-left:8px;">(AI Curated)</span>`;
             }

@@ -382,9 +382,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !isset($_SERVER['REQUEST_METHOD'])) 
 
     } elseif ($action === 'search') {
         $rawQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
-        if (!empty($rawQuery)) {
-            // Strip filler words like 'movie', 'movive', 'film', etc.
-            $cleanTerm = trim(preg_replace('/\b(movies?|movives?|films?|cinemas?|padams?|padangals?|in\s+tamil|in\s+telugu|in\s+hindi|in\s+english)\b/i', '', $rawQuery));
+            // Strip filler words and conversational phrases
+            $cleanTerm = trim(preg_replace('/\b(i\s+need|i\s+want|can\s+you\s+find|give\s+me|find\s+me|show\s+me|tell\s+me\s+about|looking\s+for|search\s+for|search|find|movies?|movives?|films?|cinemas?|padams?|padangals?|in\s+tamil|in\s+telugu|in\s+hindi|in\s+english|please)\b/i', '', $rawQuery));
+            $cleanTerm = trim(preg_replace('/[^\w\s:]/i', '', $cleanTerm));
             $searchTerm = !empty($cleanTerm) ? $cleanTerm : $rawQuery;
             $lowerTerm = strtolower($searchTerm);
 
