@@ -10,8 +10,8 @@ pipeline {
         GIT_REPO = "https://github.com/vigneshwaran21-vicky/CineSphere_project-SW-metrics.git"
         BRANCH = "main"
         EC2_USER = "ubuntu"
-        EC2_HOST = "15.252.243.69"
-        SSH_CREDENTIAL = "aws-ec2"
+        EC2_HOST = "15.252.137.249"
+        SSH_CREDENTIAL = "aws-ec2_1"
     }
 
     stages {
