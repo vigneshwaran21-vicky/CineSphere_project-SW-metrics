@@ -142,13 +142,13 @@
             </div>
         </section>
 
-        <!-- AI Watch History Recommendation Section (Logged-In Users Only) -->
-        <section id="recommendationsSection" class="section" style="display: none; margin-bottom: 30px;">
+        <!-- AI & Profile Recommendations Section -->
+        <section id="recommendationsSection" class="section" style="display: block; margin-bottom: 30px;">
             <button onclick="app.toggleRecommendations()" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: rgba(245,197,24,0.08); border: 1px solid rgba(245,197,24,0.3); padding: 14px 22px; border-radius: 14px; color: #fff; cursor: pointer; font-size: 16px; font-weight: 600; text-align: left; transition: all 0.3s ease;" onmouseenter="this.style.background='rgba(245,197,24,0.16)'" onmouseleave="this.style.background='rgba(245,197,24,0.08)'">
                 <span><i class="fas fa-magic text-primary" style="margin-right: 8px;"></i> <span id="recommendationTitle">Recommended For You</span></span>
-                <i id="recToggleIcon" class="fas fa-chevron-down text-primary" style="transition: transform 0.3s ease;"></i>
+                <i id="recToggleIcon" class="fas fa-chevron-up text-primary" style="transition: transform 0.3s ease;"></i>
             </button>
-            <div id="recommendationsContent" style="display: none; margin-top: 20px;">
+            <div id="recommendationsContent" style="display: block; margin-top: 20px;">
                 <div class="movie-grid" id="recommendedMovies">
                     <!-- AI & Watch History recommendations injected here -->
                 </div>

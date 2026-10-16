@@ -155,8 +155,24 @@ const CineBot = {
         const lower = text.toLowerCase().trim();
         const cleanWords = lower.replace(/[^\w\s]/gi, '').trim().split(/\s+/);
 
-        // 1. General Greetings Intent
-        const greetingWords = ['hi', 'hello', 'hey', 'greetings', 'hola', 'namaste', 'good morning', 'good evening', 'hi there', 'sup', 'yo'];
+        // 1. General Greetings Intent vs 'Hi' Movie
+        if (lower === 'hi' || lower === 'hi!' || (cleanWords.length === 1 && cleanWords[0] === 'hi')) {
+            setTimeout(() => {
+                this.hideTyping();
+                this.appendBotMessage(`
+                    Hello! 👋 I'm **CineSphere AI**, your intelligent cinema assistant.
+                    \nAre you looking for cinema recommendations, or searching for the movie **'Hi' / 'Hi Nanna'** (released in Tamil/Telugu)?
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+                        <button class="cinebot-pill" onclick="CineBot.handlePillClick('Hi Nanna')">🎬 'Hi' Movie</button>
+                        <button class="cinebot-pill" onclick="CineBot.handlePillClick('Tamil movies')">🌐 Tamil Movies</button>
+                        <button class="cinebot-pill" onclick="CineBot.handlePillClick('🍿 Trending Movies')">🍿 Trending</button>
+                    </div>
+                `);
+            }, 350);
+            return;
+        }
+
+        const greetingWords = ['hello', 'hey', 'greetings', 'hola', 'namaste', 'good morning', 'good evening', 'hi there', 'sup', 'yo'];
         if (greetingWords.includes(lower) || (cleanWords.length === 1 && greetingWords.includes(cleanWords[0]))) {
             setTimeout(() => {
                 this.hideTyping();
@@ -242,14 +258,22 @@ const CineBot = {
         };
         
         let foundLang = null;
+        let matchedLangKey = '';
         for (let [key, val] of Object.entries(langMap)) {
             if (cleanWords.includes(key) || lower.includes(key)) {
                 foundLang = val;
+                matchedLangKey = key;
                 break;
             }
         }
 
-        if (foundLang) {
+        // Check if query is just a language request (e.g. "tamil movies") or contains a specific title (e.g. "hi in tamil", "hi movie tamil")
+        const strippedQuery = lower
+            .replace(new RegExp('\\b' + matchedLangKey + '\\b', 'gi'), '')
+            .replace(/\b(movies?|movives?|films?|cinemas?|padams?|padangals?|in|the|best|top|show|find|search|for|watch|download|trailer)\b/gi, '')
+            .trim();
+
+        if (foundLang && strippedQuery.length === 0) {
             const movies = typeof apiDiscoverMovies === 'function' ? await apiDiscoverMovies('', foundLang.code, 'popularity.desc') : [];
             this.hideTyping();
             if (movies && movies.length > 0) {
@@ -277,7 +301,7 @@ const CineBot = {
             }
         }
 
-        if (foundGenreId) {
+        if (foundGenreId && strippedQuery.length === 0) {
             const movies = typeof apiDiscoverMovies === 'function' ? await apiDiscoverMovies(foundGenreId, '', 'popularity.desc') : [];
             this.hideTyping();
             if (movies && movies.length > 0) {
@@ -289,16 +313,23 @@ const CineBot = {
         }
 
         // 6. Default Live Movie & Knowledge Search Fallback
-        const searchResults = typeof apiSearchMovies === 'function' ? await apiSearchMovies(text) : [];
+        const cleanSearch = text.replace(/\b(movies?|movives?|films?|cinemas?|padams?|padangals?|in\s+tamil|in\s+telugu|in\s+hindi|in\s+english|show\s+me|find|search\s+for|search|watch|download|trailer)\b/gi, '').trim();
+        const searchQuery = cleanSearch.length > 0 ? cleanSearch : text;
+
+        const searchResults = typeof apiSearchMovies === 'function' ? await apiSearchMovies(searchQuery) : [];
         this.hideTyping();
 
         if (searchResults && searchResults.length > 0) {
-            this.renderMovieRecommendationList(`🔍 Results for "${this.escapeHTML(text)}":`, searchResults.slice(0, 4));
+            const isHi = searchQuery.toLowerCase() === 'hi' || lower.includes('hi movie') || lower.includes('hi movive');
+            const header = isHi ?
+                `🎬 Results for **"Hi"** (including Tamil release & *"Hi Nanna"*):` :
+                `🔍 Results for "${this.escapeHTML(searchQuery)}":`;
+            this.renderMovieRecommendationList(header, searchResults.slice(0, 4));
         } else {
             this.appendBotMessage(`
                 🤖 **CineSphere AI Response:**
                 \nI searched for **"${this.escapeHTML(text)}"**. While I couldn't find an exact movie match in the catalog, I can help you discover movies by genre or language!
-                \nTry asking for *"Trending movies"*, *"Best Sci-Fi"*, or *"Anime movies"*!
+                \nTry asking for *"Trending movies"*, *"Best Sci-Fi"*, or *"Tamil movies"*!
             `);
         }
     },

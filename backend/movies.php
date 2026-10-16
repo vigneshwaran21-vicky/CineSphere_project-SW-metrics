@@ -381,22 +381,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || !isset($_SERVER['REQUEST_METHOD'])) 
         echo json_encode(count($final) > 0 ? $final : $worldwide);
 
     } elseif ($action === 'search') {
-        $searchTerm = isset($_GET['q']) ? urlencode($_GET['q']) : '';
-        if (!empty($searchTerm)) {
-            $res = fetchFromTMDB('/search/movie?query=' . $searchTerm);
+        $rawQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
+        if (!empty($rawQuery)) {
+            // Strip filler words like 'movie', 'movive', 'film', etc.
+            $cleanTerm = trim(preg_replace('/\b(movies?|movives?|films?|cinemas?|padams?|padangals?|in\s+tamil|in\s+telugu|in\s+hindi|in\s+english)\b/i', '', $rawQuery));
+            $searchTerm = !empty($cleanTerm) ? $cleanTerm : $rawQuery;
+            $lowerTerm = strtolower($searchTerm);
+
             $results = [];
+            $res = fetchFromTMDB('/search/movie?query=' . urlencode($searchTerm));
             if ($res && isset($res['results']) && count($res['results']) > 0) {
                 $filtered = array_values(array_filter($res['results'], 'isSafeMovie'));
                 $results = array_map('mapTmdbMovie', $filtered);
             }
-            
+
+            // Special handling for queries matching "hi":
+            // Include both the Tamil release "Hi :)" and the famous "Hi Nanna" (released/dubbed in Tamil/Telugu)
+            if ($lowerTerm === 'hi' || strpos($lowerTerm, 'hi') !== false) {
+                $extraRes = fetchFromTMDB('/search/movie?query=' . urlencode('hi nanna'));
+                if ($extraRes && isset($extraRes['results'])) {
+                    $filteredExtra = array_values(array_filter($extraRes['results'], 'isSafeMovie'));
+                    $mappedExtra = array_map('mapTmdbMovie', $filteredExtra);
+                    foreach (array_reverse($mappedExtra) as $extraM) {
+                        $results = array_values(array_filter($results, function($r) use ($extraM) {
+                            return (string)$r['id'] !== (string)$extraM['id'];
+                        }));
+                        array_unshift($results, $extraM);
+                    }
+                }
+                // Boost exact titles ("Hi :)", "Hi Nanna", "Hi") and Tamil releases
+                usort($results, function($a, $b) {
+                    $scoreA = 0; $scoreB = 0;
+                    $tA = strtolower($a['title'] ?? '');
+                    $tB = strtolower($b['title'] ?? '');
+                    if ($tA === 'hi :)' || $tA === 'hi nanna' || $tA === 'hi') $scoreA += 50;
+                    if ($tB === 'hi :)' || $tB === 'hi nanna' || $tB === 'hi') $scoreB += 50;
+                    if (strtoupper($a['original_language'] ?? '') === 'TA') $scoreA += 20;
+                    if (strtoupper($b['original_language'] ?? '') === 'TA') $scoreB += 20;
+                    if (strtoupper($a['original_language'] ?? '') === 'TE') $scoreA += 15;
+                    if (strtoupper($b['original_language'] ?? '') === 'TE') $scoreB += 15;
+                    return $scoreB <=> $scoreA;
+                });
+            }
+
+            // If user mentioned Tamil, Telugu, Hindi, prioritize matching languages
+            $isTamilSearch = preg_match('/\btamil\b/i', $rawQuery);
+            $isTeluguSearch = preg_match('/\btelugu\b/i', $rawQuery);
+            $isHindiSearch = preg_match('/\bhindi\b/i', $rawQuery);
+
+            if ($isTamilSearch || $isTeluguSearch || $isHindiSearch) {
+                usort($results, function($a, $b) use ($isTamilSearch, $isTeluguSearch, $isHindiSearch) {
+                    $scoreA = 0; $scoreB = 0;
+                    if ($isTamilSearch && strtoupper($a['original_language'] ?? '') === 'TA') $scoreA += 10;
+                    if ($isTamilSearch && strtoupper($b['original_language'] ?? '') === 'TA') $scoreB += 10;
+                    if ($isTeluguSearch && strtoupper($a['original_language'] ?? '') === 'TE') $scoreA += 10;
+                    if ($isTeluguSearch && strtoupper($b['original_language'] ?? '') === 'TE') $scoreB += 10;
+                    if ($isHindiSearch && strtoupper($a['original_language'] ?? '') === 'HI') $scoreA += 10;
+                    if ($isHindiSearch && strtoupper($b['original_language'] ?? '') === 'HI') $scoreB += 10;
+                    return $scoreB <=> $scoreA;
+                });
+            }
+
             // Search local worldwide movies
-            $q = strtolower(urldecode($searchTerm));
+            $q = strtolower($searchTerm);
             $localFound = array_values(array_filter($worldwide, function($m) use ($q) {
                 return strpos(strtolower($m['title']), $q) !== false || strpos(strtolower($m['genre']), $q) !== false;
             }));
-            
-            echo json_encode(array_merge($results, $localFound));
+
+            // Avoid duplicate IDs when merging
+            $existingIds = array_column($results, 'id');
+            $uniqueLocal = array_filter($localFound, function($m) use ($existingIds) {
+                return !in_array($m['id'], $existingIds);
+            });
+
+            echo json_encode(array_merge($results, array_values($uniqueLocal)));
         } else {
             echo json_encode($worldwide);
         }

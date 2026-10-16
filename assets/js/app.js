@@ -152,20 +152,16 @@ const app = {
                 UI.renderMovieGrid('featuredMovies', movies.slice(0, 12));
                 UI.renderMovieGrid('topRatedMovies', (topRated && topRated.length > 0) ? topRated.slice(0, 12) : movies.slice(12, 24));
                 
-                // Handle recommendations section visibility and locking
+                // Handle recommendations section visibility and display
                 const user = JSON.parse(localStorage.getItem('user'));
                 const recSec = document.getElementById('recommendationsSection');
                 if (recSec) {
                     recSec.style.display = 'block';
-                    if (user) {
-                        if (typeof CineRec !== 'undefined') {
-                            CineRec.renderRecommendationSection('recommendedMovies', movies);
-                            if (CineRec.renderPeopleMatcherSection) {
-                                CineRec.renderPeopleMatcherSection('peopleMatcherMovies');
-                            }
+                    if (typeof CineRec !== 'undefined') {
+                        CineRec.renderRecommendationSection('recommendedMovies', movies);
+                        if (user && CineRec.renderPeopleMatcherSection) {
+                            CineRec.renderPeopleMatcherSection('peopleMatcherMovies');
                         }
-                    } else {
-                        document.getElementById('recommendedMovies').innerHTML = '';
                     }
                 }
             } else if (movies.error) {
@@ -329,12 +325,6 @@ const app = {
     },
 
     toggleRecommendations() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user) {
-            if (typeof UI !== 'undefined' && UI.showAuthAlert) UI.showAuthAlert('Personalized Recommendations');
-            return;
-        }
-
         const content = document.getElementById('recommendationsContent');
         const icon = document.getElementById('recToggleIcon');
         if (content) {
